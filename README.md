@@ -8,3 +8,8 @@ For instance, if you source code has a function classed MainWindow_OnPaint then 
 
 See sample 1.
 
+https://github.com/thradams/cwinexpress/blob/master/Sample/Sample/MainWindow.cpp
+
+and the generated file
+
+https://github.com/thradams/cwinexpress/blob/master/Sample/Sample/MainWindowProc.c
