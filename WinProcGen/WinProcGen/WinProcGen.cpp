@@ -64,15 +64,27 @@ void Load(const const char* filename,
                 auto match = *i;
                 auto str = match.str();
 
-                if (str.find(L"//") != 0)
+                if (ws.find(L"//") != 0)
                 {
                     //ignora linha comentada
-                    auto sufix = GetClassName(str);
+                    auto className = GetClassName(str);
                     auto funcName = GetFunctionName(str);
                     auto it = map2.find(funcName);
+
+                    //Verificar se é comando de menu
+                    if (funcName.find(L"_OnMenuCommand_") == 0)
+                    {
+                        //_OnMenuCommand_Exit
+                        //neste caso colocar em uma lista especial
+                        //no WM_COMMAND o gerator tem que fazer uma lista
+                        //pelo nome IDM_EXIT
+                        //o ultimo else chama o oncommand
+                    }
+                    
+
                     if (it != map2.end())
                     {
-                      classes[sufix] = 1;
+                      classes[className] = 1;
                       functions.insert(str);
                     }
                 }

@@ -34,6 +34,7 @@ void MainWindow_OnDestroy(MainWindow* p)
 {
 
 }
+
 void MainWindow_Create(MainWindow* p)
 {
     p->hwnd = Create(&MainWindow_WndProc,

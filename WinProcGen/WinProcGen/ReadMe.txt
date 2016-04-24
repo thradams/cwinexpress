@@ -1,40 +1,49 @@
-========================================================================
-    CONSOLE APPLICATION : WinProcGen Project Overview
-========================================================================
+#include "stdafx.h"
+#include "MainWindow.h"
+#include "Resource.h"
+#include "cwinexpress.h"
 
-AppWizard has created this WinProcGen application for you.
+//includes the code for the main window here
+//call WinProcGen.exe MainWindow.cpp MainWindowProc.c
+#include "mainwindowproc.c"
 
-This file contains a summary of what you will find in each of the files that
-make up your WinProcGen application.
+void MainWindow_OnMenuCommand_Exit(MainWindow* p)
+{
+    PostQuitMessage(0);
+}
 
+void MainWindow_OnClose(MainWindow* p)
+{
+    PostQuitMessage(0);
+}
 
-WinProcGen.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+void MainWindow_OnCommand(MainWindow* p, int wmId)
+{
+    if (wmId == IDM_EXIT)
+        MainWindow_OnMenuCommand_Exit(p);
+    else if (wmId == IDM_ABOUT)
+        MessageBox(p->hwnd, L"Sample application!", L"Abour", MB_ICONINFORMATION);
+}
 
-WinProcGen.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+void MainWindow_OnPaint(MainWindow* p, HDC hdc)
+{
+    TextOut(hdc, 10, 10, L"Hello World!", 12);
+}
 
-WinProcGen.cpp
-    This is the main application source file.
+void MainWindow_OnDestroy(MainWindow* p)
+{
 
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
+}
 
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named WinProcGen.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+void MainWindow_Create(MainWindow* p)
+{
+    p->hwnd = Create(&MainWindow_WndProc,
+        L"MainWindow",
+        L"MainWindow",
+        p,
+        WS_OVERLAPPEDWINDOW | WS_MAXIMIZE,
+        0,
+        NULL,
+        IDC_SAMPLE,
+        IDI_SAMPLE);
+}
