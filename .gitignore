@@ -8,3 +8,5 @@
 /WinProcGen/Debug
 *.suo
 *.sdf
+*.opensdf
+*.ipch

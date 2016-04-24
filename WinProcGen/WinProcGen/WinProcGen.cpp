@@ -214,6 +214,7 @@ int main(int argc, char *argv[])
     
     if (argc > 3)
     {
+        cout << "Template:" << argv[3];
         templatename = argv[3];
     }
 
