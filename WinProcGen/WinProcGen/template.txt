@@ -41,12 +41,12 @@ void {class}_OnDestroy({class}* p);
 void {class}_OnCommand({class}* p, int wmId);
     case WM_COMMAND:
         {
-            {class}_OnCommand(p,  HIWORD(wParam));
+            {class}_OnCommand(p,  LOWORD(wParam));
         }
 
 void {class}_OnClose({class}* p);
   case WM_CLOSE:
-    {class}_OnClose();
+    {class}_OnClose(p);
 
 {class}_#end
    default:

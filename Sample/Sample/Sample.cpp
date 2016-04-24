@@ -3,33 +3,8 @@
 
 #include "stdafx.h"
 #include "Sample.h"
-#include "cwinexpress.h"
+#include "MainWindow.h"
 
-typedef struct
-{
-    HWND hwnd;
-} MainWindow;
-
-#include "mainwindowproc.c"
-
-void MainWindow_OnCommand(MainWindow* p, int wmId)
-{
-}
-
-void MainWindow_OnPaint(MainWindow* p, HDC hdc)
-{
-}
-
-void MainWindow_OnDestroy(MainWindow* p)
-{
-
-}
-void MainWindow_Create(MainWindow* p)
-{
-    p->hwnd = Create(&MainWindow_WndProc,
-        L"MainWindow", L"MainWindow", p,
-        WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, 0, NULL, IDC_SAMPLE, IDI_SAMPLE);
-}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
