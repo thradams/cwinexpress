@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/WinProcGen/WinProcGen/Debug/WinProcGen.tlog
+/WinProcGen/WinProcGen/Debug
+/WinProcGen/ipch/WINPROCGEN-d1b0b6b
+/WinProcGen/Debug
+*.suo
+*.sdf
