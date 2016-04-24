@@ -2,12 +2,28 @@
 /*
     Generated windows procedure for {class}
 */
-LRESULT CALLBACK {class}_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK {class}_WndProc(HWND hWnd,
+                                 UINT message,
+								 WPARAM wParam,
+								 LPARAM lParam)
 {
+    {class} *p = NULL;
+	//
+    if (message == WM_NCCREATE)
+    {
+        CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
+        p = ({class}*)pCreate->lpCreateParams;
+        SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)p);
+    }
+    else
+    {
+        p = ({class}*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+    }
+	//
     switch (message)
     {
 
-WORD {class}_OnPaint({class}* p, HDC hdc);
+void {class}_OnPaint({class}* p, HDC hdc);
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -16,22 +32,25 @@ WORD {class}_OnPaint({class}* p, HDC hdc);
             EndPaint(hWnd, &ps);
         }
 
-WORD {class}_OnDestroy({class}* p);
+void {class}_OnDestroy({class}* p);
     case WM_DESTROY:
         {
             {class}_OnDestroy(p);
         }
 
-WORD {class}_OnCommand({class}* p);
+void {class}_OnCommand({class}* p, int wmId);
     case WM_COMMAND:
         {
-            {class}_OnCommand(p);
+            {class}_OnCommand(p,  HIWORD(wParam));
         }
 
-WORD {class}_OnClose({class}* p);
+void {class}_OnClose({class}* p);
   case WM_CLOSE:
     {class}_OnClose();
 
 {class}_#end
+   default:
+    return DefWindowProc(hWnd, message, wParam, lParam);
     }
+	return 0;
   }

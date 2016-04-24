@@ -30,12 +30,18 @@
     <ClInclude Include="Sample.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cwinexpress.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cwinexpress.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

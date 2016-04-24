@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "Sample.h"
-
+#include "cwinexpress.h"
 
 typedef struct
 {
@@ -24,7 +24,12 @@ void MainWindow_OnDestroy(MainWindow* p)
 {
 
 }
-
+void MainWindow_Create(MainWindow* p)
+{
+    p->hwnd = Create(&MainWindow_WndProc,
+        L"MainWindow", L"MainWindow", p,
+        WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, 0, NULL, IDC_SAMPLE, IDI_SAMPLE);
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -36,7 +41,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     
     MainWindow mainWindow;
 
-    
+    MainWindow_Create(&mainWindow);
+
     MSG msg;
 
     while (GetMessage(&msg, nullptr, 0, 0))
