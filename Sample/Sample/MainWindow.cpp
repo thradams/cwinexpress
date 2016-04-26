@@ -18,6 +18,20 @@ void AboutDlg_OnInitDialog(AboutDlg* p)
 {
 }
 
+//This function identifies the dialog procedure instead of winproc
+INT_PTR AboutDlg_ShowModal(AboutDlg* p, HWND parent)
+{
+    INT_PTR r = DialogBoxParam(
+        NULL,
+        MAKEINTRESOURCE(IDD_ABOUTBOX),
+        parent,
+        &AboutDlg_DlgProc,
+        (LPARAM)&p
+        );
+    return r;
+}
+
+
 void AboutDlg_OnCommand(AboutDlg* p, int id)
 {
     if (id == IDOK || id == IDCANCEL)
@@ -35,14 +49,7 @@ void MainWindow_OnMenuCommand_Exit(MainWindow* p)
 void MainWindow_OnMenuCommand_About(MainWindow* p)
 {
     AboutDlg aboutDlg;
-
-    INT_PTR r = DialogBoxParam(
-        NULL,
-        MAKEINTRESOURCE(IDD_ABOUTBOX),
-        p->hwnd,
-        &AboutDlg_DlgProc,
-        (LPARAM)&aboutDlg
-        );
+    AboutDlg_ShowModal(&aboutDlg, p->hwnd);
 }
 
 
