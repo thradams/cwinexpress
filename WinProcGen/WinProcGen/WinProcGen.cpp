@@ -9,6 +9,9 @@
 #include <iostream>
 using namespace std;
 
+void GenerateCommands(std::wofstream& ofs,
+    std::set<std::wstring>& functions,
+    const std::wstring& className);
 struct TemplateItem
 {
     std::wstring declaration;
@@ -25,6 +28,16 @@ std::wstring GetClassName(const std::wstring& str)
     return L"";
 }
 
+
+std::wstring GetLastFunctionName(const std::wstring& str)
+{
+    auto pos = str.rfind(L"_");
+    if (pos != std::wstring::npos)
+    {
+        return str.substr(pos + 1, str.size() - pos - 1);
+    }
+    return L"";
+}
 std::wstring GetFunctionName(const std::wstring& str)
 {
     auto pos = str.find(L"_");
@@ -71,24 +84,30 @@ void Load(const const char* filename,
                     auto funcName = GetFunctionName(str);
                     auto it = map2.find(funcName);
 
-                    //Verificar se é comando de menu
-                    if (funcName.find(L"_OnMenuCommand_") == 0)
-                    {
-                        //_OnMenuCommand_Exit
-                        //neste caso colocar em uma lista especial
-                        //no WM_COMMAND o gerator tem que fazer uma lista
-                        //pelo nome IDM_EXIT
-                        //o ultimo else chama o oncommand
-                    }
-                    
+
+
 
                     if (it != map2.end())
                     {
-                      classes[className] = 1;
-                      functions.insert(str);
+                        classes[className] = 1;
+                        functions.insert(str);
+                    }
+                    else
+                    {
+                        //Verificar se é comando de menu
+                        if (funcName.find(L"_OnMenuCommand_") == 0)
+                        {
+                            classes[className] = 1;
+                            functions.insert(str);
+                            //_OnMenuCommand_Exit
+                            //neste caso colocar em uma lista especial
+                            //no WM_COMMAND o gerator tem que fazer uma lista
+                            //pelo nome IDM_EXIT
+                            //o ultimo else chama o oncommand
+                        }
                     }
                 }
-               
+
             }
         }
     }
@@ -124,7 +143,7 @@ void LoadTemplate(const char* filename,
     if (ifs.is_open())
     {
         std::wstring ws;
-  
+
         while (std::getline(ifs, ws))
         {
             auto funcName = GetFunctionName2(ws);
@@ -180,9 +199,21 @@ void Generate(std::wofstream& ofs,
     for (auto& itClasses : classes)
     {
         auto className = itClasses.first;
+        bool bIsDlg = functions.find(className + L"_OnInitDialog") != functions.end();
+
         if (!bForwardDeclarations)
         {
-            auto body = map2[L"_#begin"].body;
+            std::wstring body;
+            if (bIsDlg)
+            {
+                body = map2[L"_#begindlg"].body;
+            }
+            else
+            {
+                body = map2[L"_#begin"].body;
+            }
+            
+
             find_replace(body, L"{class}", className);
             ofs << body;
         }
@@ -212,7 +243,19 @@ void Generate(std::wofstream& ofs,
         }
         if (!bForwardDeclarations)
         {
-            auto body = map2[L"_#end"].body;
+            GenerateCommands(ofs,
+                functions,
+                className);
+
+            std::wstring body;
+            if (bIsDlg)
+            {
+                body = map2[L"_#enddlg"].body;
+            }
+            else
+            {
+                body = map2[L"_#end"].body;
+            }
             find_replace(body, L"{class}", className);
             ofs << body;
         }
@@ -222,6 +265,87 @@ void Generate(std::wofstream& ofs,
         }
     }
 }
+
+inline void ToUpper(std::wstring& str)
+{
+    transform(
+        str.begin(), str.end(),
+        str.begin(),
+        towupper); // towlower for lower case
+}
+void GenerateCommands(std::wofstream& ofs,
+    std::set<std::wstring>& functions,
+    const std::wstring& className)
+{
+    bool bIncluded = false;
+
+    int c = 0;
+
+    for (auto& functionFullName : functions)
+    {
+        if (functionFullName.find(L"_OnMenuCommand_") != std::wstring::npos)
+        {
+            auto func = GetLastFunctionName(functionFullName);
+
+            auto classNameLocal = GetClassName(functionFullName);
+            if (className == classNameLocal)
+            {
+                ToUpper(func);
+                if (!bIncluded)
+                {
+                    bIncluded = true;
+                    ofs << L"    case WM_COMMAND:" << endl;
+
+                }
+
+                if (c > 0)
+                    ofs << L"      else";
+                ofs << L"        if (LOWORD(wParam) == " << L"IDM_" << func << ")" << endl
+                    << L"       " << functionFullName << L"(p);" << endl;
+                c++;
+            }
+            //ofs << L"void " << functionFullName << L"(" << className << L"*p);" << endl;
+        }
+    }
+    //adicionar command se existir
+    auto it = functions.find(className + L"_OnCommand");
+    if (it != functions.end())
+    {
+        if (!bIncluded)
+        {
+            bIncluded = true;
+            ofs << L"    case WM_COMMAND:" << endl;
+
+        }
+
+        if (c > 0)
+            ofs << L"        else " << endl;
+        ofs << L"       " << *it << L"(p, LOWORD(wParam) );" << endl;
+    }
+    //ofs  <<
+
+    if (bIncluded)
+    {
+        ofs << L"    break;" << endl << endl;
+
+    }
+}
+
+void GenerateCommands(std::wofstream& ofs,
+    std::set<std::wstring>& functions,
+    bool bForwardDeclarations)
+{
+
+    for (auto& functionFullName : functions)
+    {
+        if (functionFullName.find(L"_OnMenuCommand_") != std::wstring::npos)
+        {
+            auto className = GetClassName(functionFullName);
+            ofs << L"void " << functionFullName << L"(" << className << L"*p);" << endl;
+        }
+    }
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -233,7 +357,7 @@ int main(int argc, char *argv[])
 
     const char* filename = argv[1];// "readme.txt";
     const char* templatename = "template.txt";
-    
+
     if (argc > 3)
     {
         cout << "Template:" << argv[3];
@@ -249,7 +373,7 @@ int main(int argc, char *argv[])
 
     const char* filenameOut = argv[2];
 
-    
+
     std::locale ulocale(std::locale(), new std::codecvt_utf8<wchar_t>);
     std::wofstream ofs(filenameOut);
     ofs.imbue(ulocale);
@@ -263,6 +387,11 @@ int main(int argc, char *argv[])
     ofs << L"*/" << endl << endl;
 
     Generate(ofs, map2, functions, classes, true);
+
+    GenerateCommands(ofs,
+        functions,
+        true);
+
     Generate(ofs, map2, functions, classes, false);
     return 0;
 }

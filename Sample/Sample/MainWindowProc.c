@@ -5,21 +5,53 @@ See https://github.com/thradams/cwinexpress
 
 /*Forward declarations*/
 
+void AboutDlg_OnCommand(AboutDlg* p, int wmId);
+void AboutDlg_OnInitDialog(AboutDlg* p);
+
 void MainWindow_OnClose(MainWindow* p);
-void MainWindow_OnCommand(MainWindow* p, int wmId);
-void MainWindow_OnDestroy(MainWindow* p);
 void MainWindow_OnPaint(MainWindow* p, HDC hdc);
 
+void MainWindow_OnMenuCommand_About(MainWindow*p);
+void MainWindow_OnMenuCommand_Exit(MainWindow*p);
+/*
+    Generated windows procedure for AboutDlg
+*/
+INT_PTR CALLBACK AboutDlg_DlgProc(HWND hDlg,
+    UINT message,
+    WPARAM wParam,
+    LPARAM lParam)
+{
+    AboutDlg *p = NULL;
+    p = (AboutDlg*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+    //
+    switch (message)
+    {
+    case WM_INITDIALOG:
+    {
+        p = (AboutDlg*)lParam;
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)lParam);
+        p->hDlg = hDlg;
+        AboutDlg_OnInitDialog(p);
+        return (INT_PTR)TRUE;
+    }
+    break;
+    case WM_COMMAND:
+        AboutDlg_OnCommand(p, LOWORD(wParam));
+        break;
+
+    }
+    return (INT_PTR)FALSE;
+}
 /*
     Generated windows procedure for MainWindow
 */
 LRESULT CALLBACK MainWindow_WndProc(HWND hWnd,
-                                 UINT message,
-								 WPARAM wParam,
-								 LPARAM lParam)
+    UINT message,
+    WPARAM wParam,
+    LPARAM lParam)
 {
     MainWindow *p = NULL;
-	//
+    //
     if (message == WM_NCCREATE)
     {
         CREATESTRUCT* pCreate = (CREATESTRUCT*)lParam;
@@ -30,28 +62,29 @@ LRESULT CALLBACK MainWindow_WndProc(HWND hWnd,
     {
         p = (MainWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
     }
-	//
+    //
     switch (message)
     {
-  case WM_CLOSE:
-    MainWindow_OnClose(p);
-    case WM_COMMAND:
-        {
-            MainWindow_OnCommand(p,  LOWORD(wParam));
-        }
-    case WM_DESTROY:
-        {
-            MainWindow_OnDestroy(p);
-        }
+    case WM_CLOSE:
+        MainWindow_OnClose(p);
+        break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            MainWindow_OnPaint(p, hdc);
-            EndPaint(hWnd, &ps);
-        }
-   default:
-    return DefWindowProc(hWnd, message, wParam, lParam);
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        MainWindow_OnPaint(p, hdc);
+        EndPaint(hWnd, &ps);
     }
-	return 0;
-  }
+    break;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDM_ABOUT)
+            MainWindow_OnMenuCommand_About(p);
+        else        if (LOWORD(wParam) == IDM_EXIT)
+            MainWindow_OnMenuCommand_Exit(p);
+        break;
+
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+    return 0;
+}

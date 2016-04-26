@@ -3,6 +3,15 @@
 #include "Resource.h"
 #include "cwinexpress.h"
 
+typedef struct
+{
+    HWND hwnd;
+} AboutDlg;
+
+void AboutDlg_OnInitDialog(AboutDlg* p)
+{
+}
+
 //includes the code for the main window here
 //call WinProcGen.exe MainWindow.cpp MainWindowProc.c
 #include "mainwindowproc.c"
@@ -12,18 +21,18 @@ void MainWindow_OnMenuCommand_Exit(MainWindow* p)
     PostQuitMessage(0);
 }
 
+void MainWindow_OnMenuCommand_About(MainWindow* p)
+{
+    MessageBox(p->hwnd, L"Sample application!", L"About", MB_ICONINFORMATION);
+}
+
+
 void MainWindow_OnClose(MainWindow* p)
 {
     PostQuitMessage(0);
 }
 
-void MainWindow_OnCommand(MainWindow* p, int wmId)
-{
-    if (wmId == IDM_EXIT)
-        MainWindow_OnMenuCommand_Exit(p);
-    else if (wmId == IDM_ABOUT)
-        MessageBox(p->hwnd, L"Sample application!", L"Abour", MB_ICONINFORMATION);
-}
+
 
 void MainWindow_OnPaint(MainWindow* p, HDC hdc)
 {

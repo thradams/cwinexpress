@@ -1,3 +1,18 @@
+{class}_#begindlg
+/*
+    Generated windows procedure for {class}
+*/
+INT_PTR CALLBACK {class}_DlgProc(HWND hDlg,
+                                 UINT message,
+                                 WPARAM wParam,
+                                 LPARAM lParam)
+{
+    {class} *p = NULL;
+    p = ({class}*)GetWindowLongPtr(hDlg, GWLP_USERDATA);  
+	//
+    switch (message)
+    {
+
 {class}_#begin
 /*
     Generated windows procedure for {class}
@@ -31,26 +46,42 @@ void {class}_OnPaint({class}* p, HDC hdc);
             {class}_OnPaint(p, hdc);
             EndPaint(hWnd, &ps);
         }
+		break;
+
+void {class}_OnInitDialog({class}* p);
+    case WM_INITDIALOG:
+        {
+		    p = ({class}*) lParam;
+            SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR) lParam);
+			p->hDlg = hDlg;
+            {class}_OnInitDialog(p);
+			return (INT_PTR)TRUE;
+        }
+		break;
+
 
 void {class}_OnDestroy({class}* p);
     case WM_DESTROY:
         {
             {class}_OnDestroy(p);
         }
+		break;
 
 void {class}_OnCommand({class}* p, int wmId);
-    case WM_COMMAND:
-        {
-            {class}_OnCommand(p,  LOWORD(wParam));
-        }
 
 void {class}_OnClose({class}* p);
   case WM_CLOSE:
     {class}_OnClose(p);
+	break;
 
 {class}_#end
    default:
     return DefWindowProc(hWnd, message, wParam, lParam);
     }
 	return 0;
+  }
+
+{class}_#enddlg
+    }
+    return (INT_PTR)FALSE;
   }
